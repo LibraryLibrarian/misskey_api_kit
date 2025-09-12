@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  misskey_api_core: ^0.0.2-beta
 
 dev_dependencies:
   flutter_test:
