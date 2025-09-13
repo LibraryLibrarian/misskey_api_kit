@@ -15,13 +15,13 @@ class MisskeyApiKitClient {
   final core.MisskeyHttpClient http;
 
   /// ノート関連API
-  final NotesApi notes;
+  late final NotesApi notes;
 
   /// 通知関連API
-  final NotificationsApi notifications;
+  late final NotificationsApi notifications;
 
   /// チャンネル関連API
-  final ChannelsApi channels;
+  late final ChannelsApi channels;
 
   /// コンストラクタ
   ///
@@ -29,14 +29,11 @@ class MisskeyApiKitClient {
   /// - [tokenProvider]: 認可トークン供給関数
   /// - [logger]: ロガー（省略時は `misskey_api_core` の既定ロガー）
   MisskeyApiKitClient({required MisskeyApiKitConfig config, core.TokenProvider? tokenProvider, core.Logger? logger})
-    : http = core.MisskeyHttpClient(config: config.coreConfig, tokenProvider: tokenProvider, logger: logger),
-      notes = NotesApi(
-        http: core.MisskeyHttpClient(config: config.coreConfig, tokenProvider: tokenProvider, logger: logger),
-      ),
-      notifications = NotificationsApi(
-        http: core.MisskeyHttpClient(config: config.coreConfig, tokenProvider: tokenProvider, logger: logger),
-      ),
-      channels = ChannelsApi(
-        http: core.MisskeyHttpClient(config: config.coreConfig, tokenProvider: tokenProvider, logger: logger),
-      );
+    : http = core.MisskeyHttpClient(config: config.coreConfig, tokenProvider: tokenProvider, logger: logger) {
+    // 共有HTTPクライアントを各APIに注入
+    final core.MisskeyHttpClient shared = http;
+    notes = NotesApi(http: shared);
+    notifications = NotificationsApi(http: shared);
+    channels = ChannelsApi(http: shared);
+  }
 }
