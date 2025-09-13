@@ -33,16 +33,22 @@ class ChannelsApi {
 
   /// 指定チャンネルのタイムラインを取得する（/api/channels/timeline）
   ///
-  /// - パラメータ: [channelId] 必須、[limit] 取得上限、[untilId] ページング用
+  /// - パラメータ: [channelId] 必須、[limit] 取得上限、[sinceId]/[untilId] ページング用
   /// - 備考: レスポンス要素に `{ note: {...} }` が混在する実装があるため、
   ///   本メソッドは生配列のJSONを返す。呼び出し側で `note` の有無に応じて解釈する
   /// - 認証: 必須
   /// - リトライ: 読み取り系のため `idempotent=true`
-  Future<List<Map<String, dynamic>>> timeline({required String channelId, int limit = 30, String? untilId}) async {
+  Future<List<Map<String, dynamic>>> timeline({
+    required String channelId,
+    int limit = 30,
+    String? sinceId,
+    String? untilId,
+  }) async {
     try {
       final Map<String, dynamic> body = <String, dynamic>{
         'channelId': channelId,
         'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
         if (untilId != null) 'untilId': untilId,
       };
       final List<dynamic> res = await http.send<List<dynamic>>(
