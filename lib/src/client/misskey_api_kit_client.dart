@@ -1,5 +1,6 @@
 import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
+import '../api/channels_api.dart';
 import '../api/notes_api.dart';
 import '../api/notifications_api.dart';
 import '../core/config/misskey_api_kit_config.dart';
@@ -19,6 +20,9 @@ class MisskeyApiKitClient {
   /// 通知関連API
   final NotificationsApi notifications;
 
+  /// チャンネル関連API
+  final ChannelsApi channels;
+
   /// コンストラクタ
   ///
   /// - [config]: Kit設定（下層の `MisskeyApiConfig` を含む）
@@ -30,6 +34,9 @@ class MisskeyApiKitClient {
         http: core.MisskeyHttpClient(config: config.coreConfig, tokenProvider: tokenProvider, logger: logger),
       ),
       notifications = NotificationsApi(
+        http: core.MisskeyHttpClient(config: config.coreConfig, tokenProvider: tokenProvider, logger: logger),
+      ),
+      channels = ChannelsApi(
         http: core.MisskeyHttpClient(config: config.coreConfig, tokenProvider: tokenProvider, logger: logger),
       );
 }
