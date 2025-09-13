@@ -27,7 +27,7 @@ class ChannelsApi {
       );
       return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/my-favorites');
+      throw mapAnyToKitException(e, endpoint: '/channels/my-favorites');
     }
   }
 
@@ -53,7 +53,7 @@ class ChannelsApi {
       );
       return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/timeline');
+      throw mapAnyToKitException(e, endpoint: '/channels/timeline');
     }
   }
 
@@ -71,7 +71,7 @@ class ChannelsApi {
       );
       return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/featured');
+      throw mapAnyToKitException(e, endpoint: '/channels/featured');
     }
   }
 
@@ -89,7 +89,7 @@ class ChannelsApi {
       );
       return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/followed');
+      throw mapAnyToKitException(e, endpoint: '/channels/followed');
     }
   }
 
@@ -107,7 +107,7 @@ class ChannelsApi {
       );
       return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/owned');
+      throw mapAnyToKitException(e, endpoint: '/channels/owned');
     }
   }
 
@@ -125,7 +125,7 @@ class ChannelsApi {
       );
       return res.cast<String, dynamic>();
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/show');
+      throw mapAnyToKitException(e, endpoint: '/channels/show');
     }
   }
 
@@ -143,7 +143,7 @@ class ChannelsApi {
       );
       return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/search');
+      throw mapAnyToKitException(e, endpoint: '/channels/search');
     }
   }
 
@@ -159,7 +159,7 @@ class ChannelsApi {
         options: const core.RequestOptions(authRequired: true),
       );
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/favorite');
+      throw mapAnyToKitException(e, endpoint: '/channels/favorite');
     }
   }
 
@@ -175,7 +175,7 @@ class ChannelsApi {
         options: const core.RequestOptions(authRequired: true),
       );
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/unfavorite');
+      throw mapAnyToKitException(e, endpoint: '/channels/unfavorite');
     }
   }
 
@@ -191,7 +191,7 @@ class ChannelsApi {
         options: const core.RequestOptions(authRequired: true),
       );
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/follow');
+      throw mapAnyToKitException(e, endpoint: '/channels/follow');
     }
   }
 
@@ -207,20 +207,7 @@ class ChannelsApi {
         options: const core.RequestOptions(authRequired: true),
       );
     } catch (e) {
-      throw _mapException(e, endpoint: '/channels/unfollow');
+      throw mapAnyToKitException(e, endpoint: '/channels/unfollow');
     }
-  }
-
-  MisskeyApiKitException _mapException(Object e, {required String endpoint}) {
-    if (e is core.MisskeyApiException) {
-      return MisskeyApiKitException(
-        statusCode: e.statusCode,
-        code: e.code,
-        message: e.message,
-        endpoint: endpoint,
-        raw: e,
-      );
-    }
-    return MisskeyApiKitException(message: 'Unexpected error', endpoint: endpoint, raw: e);
   }
 }

@@ -70,7 +70,7 @@ class NotesApi {
       final Map rawNote = (res['createdNote'] is Map) ? (res['createdNote'] as Map) : res;
       return rawNote.cast<String, dynamic>();
     } catch (e) {
-      throw _mapException(e, endpoint: '/notes/create');
+      throw mapAnyToKitException(e, endpoint: '/notes/create');
     }
   }
 
@@ -225,20 +225,7 @@ class NotesApi {
 
       return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     } catch (e) {
-      throw _mapException(e, endpoint: path);
+      throw mapAnyToKitException(e, endpoint: path);
     }
-  }
-
-  MisskeyApiKitException _mapException(Object e, {required String endpoint}) {
-    if (e is core.MisskeyApiException) {
-      return MisskeyApiKitException(
-        statusCode: e.statusCode,
-        code: e.code,
-        message: e.message,
-        endpoint: endpoint,
-        raw: e,
-      );
-    }
-    return MisskeyApiKitException(message: 'Unexpected error', endpoint: endpoint, raw: e);
   }
 }

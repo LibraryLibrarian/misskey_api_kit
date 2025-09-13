@@ -31,7 +31,7 @@ class NotificationsApi {
       );
       return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     } catch (e) {
-      throw _mapException(e, endpoint: '/i/notifications');
+      throw mapAnyToKitException(e, endpoint: '/i/notifications');
     }
   }
 
@@ -45,7 +45,7 @@ class NotificationsApi {
         options: const core.RequestOptions(authRequired: true),
       );
     } catch (e) {
-      throw _mapException(e, endpoint: '/i/read-all-notifications');
+      throw mapAnyToKitException(e, endpoint: '/i/read-all-notifications');
     }
   }
 
@@ -59,20 +59,7 @@ class NotificationsApi {
         options: const core.RequestOptions(authRequired: true),
       );
     } catch (e) {
-      throw _mapException(e, endpoint: '/i/read-notification');
+      throw mapAnyToKitException(e, endpoint: '/i/read-notification');
     }
-  }
-
-  MisskeyApiKitException _mapException(Object e, {required String endpoint}) {
-    if (e is core.MisskeyApiException) {
-      return MisskeyApiKitException(
-        statusCode: e.statusCode,
-        code: e.code,
-        message: e.message,
-        endpoint: endpoint,
-        raw: e,
-      );
-    }
-    return MisskeyApiKitException(message: 'Unexpected error', endpoint: endpoint, raw: e);
   }
 }
