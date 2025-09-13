@@ -35,6 +35,42 @@ class NotificationsApi {
     }
   }
 
+  /// グループ化された通知を取得（/api/i/notifications-grouped）
+  ///
+  /// - ページング: `sinceId` より新規、`untilId` より古い方向に取得
+  /// - フィルタ: フォロー中のみ（`following`）、通知タイプの包含/除外（`includeTypes`/`excludeTypes`）
+  Future<List<Map<String, dynamic>>> listGrouped({
+    int limit = 30,
+    String? sinceId,
+    String? untilId,
+    bool? following,
+    bool? markAsRead,
+    List<String>? includeTypes,
+    List<String>? excludeTypes,
+  }) async {
+    try {
+      final Map<String, dynamic> body = <String, dynamic>{
+        'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
+        if (untilId != null) 'untilId': untilId,
+        if (following != null) 'following': following,
+        if (markAsRead != null) 'markAsRead': markAsRead,
+        if (includeTypes != null && includeTypes.isNotEmpty) 'includeTypes': includeTypes,
+        if (excludeTypes != null && excludeTypes.isNotEmpty) 'excludeTypes': excludeTypes,
+      };
+
+      final List<dynamic> res = await http.send<List<dynamic>>(
+        '/i/notifications-grouped',
+        method: 'POST',
+        body: body,
+        options: core.RequestOptions(authRequired: true, idempotent: markAsRead != true),
+      );
+      return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/i/notifications-grouped');
+    }
+  }
+
   /// 全通知を既読にする（/api/i/read-all-notifications）
   Future<void> readAll() async {
     try {
