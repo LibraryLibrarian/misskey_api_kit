@@ -2,6 +2,7 @@ name: misskey_api_kit
 description: "A new Flutter package project."
 version: 0.0.1
 homepage:
+publish_to: none
 
 environment:
   sdk: ^3.9.0
@@ -10,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  misskey_api_core: ^0.0.2-beta
+  misskey_api_core: ^0.0.3-beta
 
 dev_dependencies:
   flutter_test:
