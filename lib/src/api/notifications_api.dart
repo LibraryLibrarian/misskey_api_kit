@@ -71,6 +71,29 @@ class NotificationsApi {
     }
   }
 
+  /// 通知を作成（/api/notifications/create）
+  ///
+  /// - 認証: 必須（アプリ/ユーザーのアクセストークン）
+  /// - リクエスト: `body`（必須）、`header`/`icon`（任意）
+  /// - レスポンス: 204 No Content（成功時）
+  Future<void> create({required String body, String? header, String? icon}) async {
+    try {
+      final Map<String, dynamic> req = <String, dynamic>{
+        'body': body,
+        if (header != null) 'header': header,
+        if (icon != null) 'icon': icon,
+      };
+      await http.send<void>(
+        '/notifications/create',
+        method: 'POST',
+        body: req,
+        options: const core.RequestOptions(authRequired: true),
+      );
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notifications/create');
+    }
+  }
+
   /// 全通知を既読にする（/api/i/read-all-notifications）
   Future<void> readAll() async {
     try {
