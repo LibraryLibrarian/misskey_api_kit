@@ -9,5 +9,7 @@ void main() {
     final client = MisskeyApiKitClient(config: kitConfig);
     expect(client.notes, isNotNull);
     expect(client.notifications, isNotNull);
+    expect(client.channels, isNotNull);
+    expect(client.users, isNotNull);
   });
 }

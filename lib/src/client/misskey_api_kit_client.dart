@@ -3,6 +3,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 import '../api/channels_api.dart';
 import '../api/notes_api.dart';
 import '../api/notifications_api.dart';
+import '../api/users_api.dart';
 import '../core/config/misskey_api_kit_config.dart';
 
 /// Misskey API Kit のクライアント
@@ -23,6 +24,9 @@ class MisskeyApiKitClient {
   /// チャンネル関連API
   late final ChannelsApi channels;
 
+  /// ユーザー関連API
+  late final UsersApi users;
+
   /// コンストラクタ
   ///
   /// - [config]: Kit設定（下層の `MisskeyApiConfig` を含む）
@@ -35,5 +39,6 @@ class MisskeyApiKitClient {
     notes = NotesApi(http: shared);
     notifications = NotificationsApi(http: shared);
     channels = ChannelsApi(http: shared);
+    users = UsersApi(http: shared);
   }
 }
