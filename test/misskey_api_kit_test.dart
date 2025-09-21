@@ -12,4 +12,23 @@ void main() {
     expect(client.channels, isNotNull);
     expect(client.users, isNotNull);
   });
+
+  test('NotesApi の主要メソッドが存在する', () {
+    final config = core.MisskeyApiConfig(baseUrl: Uri.parse('https://example.com'));
+    final kitConfig = MisskeyApiKitConfig(coreConfig: config);
+    final client = MisskeyApiKitClient(config: kitConfig);
+
+    // ネットワークは呼ばず、メソッドのティアオフで存在性のみ検証
+    expect(client.notes.show, isA<Function>());
+    expect(client.notes.delete, isA<Function>());
+    expect(client.notes.reactions, isA<Function>());
+    expect(client.notes.reactionsCreate, isA<Function>());
+    expect(client.notes.reactionsDelete, isA<Function>());
+    expect(client.notes.favoritesCreate, isA<Function>());
+    expect(client.notes.favoritesDelete, isA<Function>());
+    expect(client.notes.search, isA<Function>());
+    expect(client.notes.searchByTag, isA<Function>());
+    expect(client.notes.replies, isA<Function>());
+    expect(client.notes.renotes, isA<Function>());
+  });
 }

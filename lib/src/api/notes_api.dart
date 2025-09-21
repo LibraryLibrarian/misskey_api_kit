@@ -91,6 +91,250 @@ class NotesApi {
     }
   }
 
+  /// ノートを取得（`/api/notes/show`）
+  ///
+  /// - 処理内容: 指定した `noteId` のノート詳細を取得して返す
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<NoteJson> show({required String noteId}) async {
+    try {
+      final Map res = await http.send<Map>(
+        '/notes/show',
+        method: 'POST',
+        body: <String, dynamic>{'noteId': noteId},
+        options: const core.RequestOptions(authRequired: true, idempotent: true),
+      );
+      return res.cast<String, dynamic>();
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/show');
+    }
+  }
+
+  /// ノートを削除（`/api/notes/delete`）
+  ///
+  /// - 処理内容: 自分のノートを削除する
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<void> delete({required String noteId}) async {
+    try {
+      await http.send<Map>(
+        '/notes/delete',
+        method: 'POST',
+        body: <String, dynamic>{'noteId': noteId},
+        options: const core.RequestOptions(authRequired: true),
+      );
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/delete');
+    }
+  }
+
+  /// ノートのリアクション一覧を取得（`/api/notes/reactions`）
+  ///
+  /// - 処理内容: 指定ノートに付与されたリアクションの一覧を取得する
+  /// - ページング: `limit`/`sinceId`/`untilId`
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<List<Map<String, dynamic>>> reactions({
+    required String noteId,
+    int limit = 30,
+    String? sinceId,
+    String? untilId,
+  }) async {
+    try {
+      final Map<String, dynamic> body = <String, dynamic>{
+        'noteId': noteId,
+        'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
+        if (untilId != null) 'untilId': untilId,
+      };
+      final List<dynamic> res = await http.send<List<dynamic>>(
+        '/notes/reactions',
+        method: 'POST',
+        body: body,
+        options: const core.RequestOptions(authRequired: true, idempotent: true),
+      );
+      return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/reactions');
+    }
+  }
+
+  /// ノートにリアクションを付与（`/api/notes/reactions/create`）
+  ///
+  /// - 処理内容: 指定ノートに `reaction`（Unicode または :shortcode:）を付与する
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<void> reactionsCreate({required String noteId, required String reaction}) async {
+    try {
+      await http.send<Map>(
+        '/notes/reactions/create',
+        method: 'POST',
+        body: <String, dynamic>{'noteId': noteId, 'reaction': reaction},
+        options: const core.RequestOptions(authRequired: true),
+      );
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/reactions/create');
+    }
+  }
+
+  /// ノートの自分のリアクションを解除（`/api/notes/reactions/delete`）
+  ///
+  /// - 処理内容: 自分が付与したリアクションを取り消す（冪等）
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<void> reactionsDelete({required String noteId}) async {
+    try {
+      await http.send<Map>(
+        '/notes/reactions/delete',
+        method: 'POST',
+        body: <String, dynamic>{'noteId': noteId},
+        options: const core.RequestOptions(authRequired: true),
+      );
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/reactions/delete');
+    }
+  }
+
+  /// ノートをお気に入りに追加（`/api/notes/favorites/create`）
+  ///
+  /// - 処理内容: 指定ノートを自分のお気に入りに登録する
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<void> favoritesCreate({required String noteId}) async {
+    try {
+      await http.send<Map>(
+        '/notes/favorites/create',
+        method: 'POST',
+        body: <String, dynamic>{'noteId': noteId},
+        options: const core.RequestOptions(authRequired: true),
+      );
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/favorites/create');
+    }
+  }
+
+  /// ノートをお気に入りから削除（`/api/notes/favorites/delete`）
+  ///
+  /// - 処理内容: 指定ノートを自分のお気に入りから外す（冪等）
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<void> favoritesDelete({required String noteId}) async {
+    try {
+      await http.send<Map>(
+        '/notes/favorites/delete',
+        method: 'POST',
+        body: <String, dynamic>{'noteId': noteId},
+        options: const core.RequestOptions(authRequired: true),
+      );
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/favorites/delete');
+    }
+  }
+
+  /// ノート検索（`/api/notes/search`）
+  ///
+  /// - 処理内容: クエリ文字列に一致するノートを検索する
+  /// - ページング: `limit`/`sinceId`/`untilId`
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<List<NoteJson>> search({required String query, int limit = 30, String? sinceId, String? untilId}) async {
+    try {
+      final Map<String, dynamic> body = <String, dynamic>{
+        'query': query,
+        'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
+        if (untilId != null) 'untilId': untilId,
+      };
+      final List<dynamic> res = await http.send<List<dynamic>>(
+        '/notes/search',
+        method: 'POST',
+        body: body,
+        options: const core.RequestOptions(authRequired: true, idempotent: true),
+      );
+      return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/search');
+    }
+  }
+
+  /// タグ検索（`/api/notes/search-by-tag`）
+  ///
+  /// - 処理内容: 指定タグを含むノートを検索する
+  /// - ページング: `limit`/`sinceId`/`untilId`
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<List<NoteJson>> searchByTag({required String tag, int limit = 30, String? sinceId, String? untilId}) async {
+    try {
+      final Map<String, dynamic> body = <String, dynamic>{
+        'tag': tag,
+        'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
+        if (untilId != null) 'untilId': untilId,
+      };
+      final List<dynamic> res = await http.send<List<dynamic>>(
+        '/notes/search-by-tag',
+        method: 'POST',
+        body: body,
+        options: const core.RequestOptions(authRequired: true, idempotent: true),
+      );
+      return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/search-by-tag');
+    }
+  }
+
+  /// 返信一覧（`/api/notes/replies`）
+  ///
+  /// - 処理内容: 対象ノートへの返信ノートを取得する
+  /// - ページング: `limit`/`sinceId`/`untilId`
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<List<NoteJson>> replies({required String noteId, int limit = 30, String? sinceId, String? untilId}) async {
+    try {
+      final Map<String, dynamic> body = <String, dynamic>{
+        'noteId': noteId,
+        'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
+        if (untilId != null) 'untilId': untilId,
+      };
+      final List<dynamic> res = await http.send<List<dynamic>>(
+        '/notes/replies',
+        method: 'POST',
+        body: body,
+        options: const core.RequestOptions(authRequired: true, idempotent: true),
+      );
+      return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/replies');
+    }
+  }
+
+  /// リノート一覧（`/api/notes/renotes`）
+  ///
+  /// - 処理内容: 対象ノートをリノートしたノートの一覧を取得する
+  /// - ページング: `limit`/`sinceId`/`untilId`
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<List<NoteJson>> renotes({required String noteId, int limit = 30, String? sinceId, String? untilId}) async {
+    try {
+      final Map<String, dynamic> body = <String, dynamic>{
+        'noteId': noteId,
+        'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
+        if (untilId != null) 'untilId': untilId,
+      };
+      final List<dynamic> res = await http.send<List<dynamic>>(
+        '/notes/renotes',
+        method: 'POST',
+        body: body,
+        options: const core.RequestOptions(authRequired: true, idempotent: true),
+      );
+      return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/renotes');
+    }
+  }
+
   /// ノートの投票に投票する（`/api/notes/polls/vote`）
   ///
   /// - 処理内容: 指定ノートの投票に選択肢インデックスで投票する
