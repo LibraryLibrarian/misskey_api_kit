@@ -37,6 +37,11 @@ class NotesApi {
   ///   - `channelId` あり: `text`/`renoteId`/`channelId` 等のみ送信
   ///     `visibility`/`localOnly`/`visibleUserIds` は送らない（送ってもサーバで無視されるため）
   ///   - `channelId` なし: `visibility`/`localOnly`/`visibleUserIds` を必要に応じて送信可能
+  ///
+  /// - 投票の送信:
+  ///   - `pollChoices` を指定した場合に `poll` オブジェクトを組み立てて送信（`choices` は必須）
+  ///   - `pollMultiple` が `true` の場合のみ `multiple: true` を付与
+  ///   - `pollExpiresAtEpochMs` が指定されていれば `expiresAt`（UTCエポックms）を付与
   Future<NoteJson> create({
     String? text,
     String? visibility,
@@ -44,6 +49,10 @@ class NotesApi {
     List<String>? visibleUserIds,
     String? channelId,
     String? renoteId,
+    // 投票（任意）
+    List<String>? pollChoices,
+    bool? pollMultiple,
+    int? pollExpiresAtEpochMs,
   }) async {
     try {
       final Map<String, dynamic> body = <String, dynamic>{
@@ -60,6 +69,14 @@ class NotesApi {
         }
       }
 
+      // 投票オブジェクトの付与（choices がある場合のみ）
+      if (pollChoices != null && pollChoices.isNotEmpty) {
+        final Map<String, dynamic> poll = <String, dynamic>{'choices': pollChoices};
+        if (pollMultiple == true) poll['multiple'] = true;
+        if (pollExpiresAtEpochMs != null) poll['expiresAt'] = pollExpiresAtEpochMs;
+        body['poll'] = poll;
+      }
+
       final Map res = await http.send<Map>(
         '/notes/create',
         method: 'POST',
@@ -71,6 +88,51 @@ class NotesApi {
       return rawNote.cast<String, dynamic>();
     } catch (e) {
       throw mapAnyToKitException(e, endpoint: '/notes/create');
+    }
+  }
+
+  /// ノートの投票に投票する（`/api/notes/polls/vote`）
+  ///
+  /// - 処理内容: 指定ノートの投票に選択肢インデックスで投票する
+  /// - 入力: `noteId` は対象ノートのID、`choice` は 0 始まりの選択肢インデックス
+  /// - 認証: 必須（アクセストークン）
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<void> pollsVote({required String noteId, required int choice}) async {
+    try {
+      await http.send<Map>(
+        '/notes/polls/vote',
+        method: 'POST',
+        body: <String, dynamic>{'noteId': noteId, 'choice': choice},
+        options: const core.RequestOptions(authRequired: true),
+      );
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/polls/vote');
+    }
+  }
+
+  /// 投票付きノートのおすすめを取得（`/api/notes/polls/recommendation`）
+  ///
+  /// - 処理内容: 投票を含むおすすめノートを取得して返す
+  /// - ページング: `sinceId`/`untilId` を任意指定可能
+  /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
+  Future<List<NoteJson>> pollsRecommendation({int limit = 30, String? sinceId, String? untilId}) async {
+    try {
+      final Map<String, dynamic> body = <String, dynamic>{
+        'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
+        if (untilId != null) 'untilId': untilId,
+      };
+
+      final List<dynamic> res = await http.send<List<dynamic>>(
+        '/notes/polls/recommendation',
+        method: 'POST',
+        body: body,
+        options: const core.RequestOptions(authRequired: true, idempotent: true),
+      );
+
+      return res.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    } catch (e) {
+      throw mapAnyToKitException(e, endpoint: '/notes/polls/recommendation');
     }
   }
 
