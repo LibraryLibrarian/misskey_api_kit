@@ -11,6 +11,7 @@ void main() {
     expect(client.notifications, isNotNull);
     expect(client.channels, isNotNull);
     expect(client.users, isNotNull);
+    expect(client.account, isNotNull);
   });
 
   test('NotesApi の主要メソッドが存在する', () {
@@ -30,5 +31,12 @@ void main() {
     expect(client.notes.searchByTag, isA<Function>());
     expect(client.notes.replies, isA<Function>());
     expect(client.notes.renotes, isA<Function>());
+  });
+
+  test('AccountApi の i() が存在する', () {
+    final config = core.MisskeyApiConfig(baseUrl: Uri.parse('https://example.com'));
+    final kitConfig = MisskeyApiKitConfig(coreConfig: config);
+    final client = MisskeyApiKitClient(config: kitConfig);
+    expect(client.account.i, isA<Function>());
   });
 }

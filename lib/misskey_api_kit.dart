@@ -1,6 +1,7 @@
 /// Misskey API Kit 公開エクスポート
 library;
 
+export 'src/api/account_api.dart';
 export 'src/api/channels_api.dart';
 export 'src/api/notes_api.dart';
 export 'src/api/notifications_api.dart';
