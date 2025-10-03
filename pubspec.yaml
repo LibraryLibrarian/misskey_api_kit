@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  misskey_api_core: ^0.0.3-beta
+  misskey_api_core: ^0.0.4-beta
 
 dev_dependencies:
   flutter_test:
