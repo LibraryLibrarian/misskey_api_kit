@@ -1,6 +1,6 @@
 {
   "debug.internalConsoleOptions": "openOnSessionStart",
-  "dart.flutterSdkPath": ".fvm/versions/3.35.3",
+  "dart.flutterSdkPath": ".fvm/versions/3.35.5",
   "[dart]": {
     "editor.defaultFormatter": "Dart-Code.dart-code",
     "editor.formatOnSave": true,
@@ -9,11 +9,13 @@
       "source.organizeImports": "explicit"
     },
     "editor.formatOnType": true,
-    "editor.rulers": [120],
+    "editor.rulers": [
+      120
+    ],
     "editor.selectionHighlight": false,
     "editor.tabCompletion": "onlySnippets",
-    "editor.wordBasedSuggestions": "off",
+    "editor.wordBasedSuggestions": "off"
   },
   "editor.formatOnSaveMode": "file",
-  "dart.lineLength": 120,
+  "dart.lineLength": 120
 }
