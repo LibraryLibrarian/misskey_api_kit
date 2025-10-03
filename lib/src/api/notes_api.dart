@@ -343,7 +343,8 @@ class NotesApi {
   /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
   Future<void> pollsVote({required String noteId, required int choice}) async {
     try {
-      await http.send<Map>(
+      // 成功時はHTTP 204 (No Content) を返すため、レスポンスボディは空 (null)
+      await http.send<Object?>(
         '/notes/polls/vote',
         method: 'POST',
         body: <String, dynamic>{'noteId': noteId, 'choice': choice},
