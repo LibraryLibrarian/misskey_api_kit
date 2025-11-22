@@ -53,6 +53,7 @@ class NotesApi {
     List<String>? pollChoices,
     bool? pollMultiple,
     int? pollExpiresAtEpochMs,
+    List<String>? fileIds,
   }) async {
     try {
       final Map<String, dynamic> body = <String, dynamic>{
@@ -75,6 +76,10 @@ class NotesApi {
         if (pollMultiple == true) poll['multiple'] = true;
         if (pollExpiresAtEpochMs != null) poll['expiresAt'] = pollExpiresAtEpochMs;
         body['poll'] = poll;
+      }
+
+      if (fileIds != null && fileIds.isNotEmpty) {
+        body['fileIds'] = fileIds;
       }
 
       final Map res = await http.send<Map>(
