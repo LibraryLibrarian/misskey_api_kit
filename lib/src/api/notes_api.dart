@@ -171,7 +171,8 @@ class NotesApi {
   /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
   Future<void> reactionsCreate({required String noteId, required String reaction}) async {
     try {
-      await http.send<Map>(
+      // 成功時はHTTP 204 (No Content) を返すため、レスポンスボディは空 (null)
+      await http.send<Object?>(
         '/notes/reactions/create',
         method: 'POST',
         body: <String, dynamic>{'noteId': noteId, 'reaction': reaction},
@@ -189,7 +190,8 @@ class NotesApi {
   /// - 例外: 失敗時は `MisskeyApiKitException` に正規化
   Future<void> reactionsDelete({required String noteId}) async {
     try {
-      await http.send<Map>(
+      // 成功時はHTTP 204 (No Content) を返すため、レスポンスボディは空 (null)
+      await http.send<Object?>(
         '/notes/reactions/delete',
         method: 'POST',
         body: <String, dynamic>{'noteId': noteId},
